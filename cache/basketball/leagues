@@ -1,0 +1,26 @@
+[
+    {
+        "id": 120,
+        "name": "Euroleague",
+        "type": "cup",
+        "logo": "https://media.api-sports.io/basketball/leagues/120.png",
+        "country": {
+            "id": 55,
+            "name": "Europe",
+            "code": null,
+            "flag": null
+        }
+    },
+    {
+        "id": 12,
+        "name": "NBA",
+        "type": "League",
+        "logo": "https://media.api-sports.io/basketball/leagues/12.png",
+        "country": {
+            "id": 5,
+            "name": "USA",
+            "code": "US",
+            "flag": "https://media.api-sports.io/flags/us.svg"
+        }
+    }
+]
