@@ -1,0 +1,137 @@
+.ng-loading {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.ng-wrap {
+  margin-bottom: 2rem;
+}
+
+.ng-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.ng-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.ng-round {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.ng-all-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  transition: color 0.2s;
+}
+
+.ng-all-btn:hover {
+  color: var(--text);
+}
+
+.ng-games {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ng-game {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  transition: border-color 0.2s;
+}
+
+.ng-played {
+  cursor: pointer;
+}
+
+.ng-played:hover {
+  border-color: var(--accent);
+}
+
+.ng-upcoming {
+  opacity: 0.75;
+}
+
+.ng-date {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+
+.ng-matchup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ng-team {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.ng-home {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.ng-away {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.ng-team-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.ng-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.ng-score {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 4rem;
+  justify-content: center;
+}
+
+.ng-pts {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.ng-div {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.ng-vs {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}

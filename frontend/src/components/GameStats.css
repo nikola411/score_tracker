@@ -1,0 +1,216 @@
+.game-stats {
+  width: 100%;
+}
+
+.game-stats .back-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.game-stats .back-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* Scoreboard */
+.stats-scoreboard {
+  text-align: center;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.stats-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.stats-league {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
+.stats-league-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.stats-venue {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+.sb-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 100px;
+}
+
+.sb-logo {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.sb-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.sb-score {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sb-points {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.sb-divider {
+  font-size: 1.5rem;
+  color: var(--text-muted);
+}
+
+.stats-status {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Sections */
+.stats-section {
+  margin-top: 1.5rem;
+}
+
+.stats-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+/* Breakdown table */
+.breakdown-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.breakdown-table th,
+.breakdown-table td {
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.breakdown-table th {
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.breakdown-table td {
+  border-top: 1px solid var(--border);
+}
+
+.breakdown-team {
+  text-align: left !important;
+  font-weight: 500;
+}
+
+.breakdown-total {
+  font-weight: 700;
+}
+
+/* Team stats */
+.team-stats-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.team-stats-block h4 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.5rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.stat-label {
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .scoreboard {
+    gap: 1rem;
+  }
+
+  .sb-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .sb-points {
+    font-size: 2rem;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+}

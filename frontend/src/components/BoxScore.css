@@ -1,0 +1,198 @@
+.box-score {
+  width: 100%;
+}
+
+.box-score .back-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  margin-bottom: 1.5rem;
+}
+
+.box-score .back-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.bs-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bs-team {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+}
+
+.bs-team:first-child {
+  justify-content: flex-end;
+}
+
+.bs-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.bs-team-name {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.bs-final {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bs-pts {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.bs-divider {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.bs-meta {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+/* Team sections */
+
+.bs-tables {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.bs-team-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.bs-team-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.bs-table-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.bs-team-title {
+  font-weight: 700;
+  font-size: 1rem;
+  flex: 1;
+}
+
+.bs-coach {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.bs-table-wrap {
+  overflow-x: auto;
+}
+
+.bs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.bs-table th {
+  padding: 0.5rem 0.6rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.bs-table td {
+  padding: 0.45rem 0.6rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.bs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.bs-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.bs-name-col {
+  text-align: left !important;
+  min-width: 160px;
+}
+
+.bs-player-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bs-headshot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bs-player-name {
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.bs-position {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.bs-pts-cell {
+  font-weight: 700;
+}
+
+.bs-pct {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.bs-pir-pos {
+  color: #4ade80;
+  font-weight: 600;
+}
+
+.bs-pir-neg {
+  color: #f87171;
+  font-weight: 600;
+}

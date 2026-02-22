@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(sudo apt-get install:*)",
+      "Bash(python3 -m venv:*)",
+      "Bash(npm run build:*)",
+      "Bash(export:*)",
+      "Bash(node -e:*)",
+      "Bash(PATH=\"/home/nikola/snap/code/220/.local/share/fnm/node-versions/v22.22.0/installation/bin:$PATH\" npm run build:*)",
+      "Bash(PATH=\"/home/nikola/snap/code/220/.local/share/fnm/node-versions/v22.22.0/installation/bin:$PATH\" node:*)",
+      "Bash(PATH=\"/home/nikola/snap/code/220/.local/share/fnm/node-versions/v22.22.0/installation/bin:$PATH\" node -e:*)",
+      "Bash(curl:*)"
+    ]
+  }
+}

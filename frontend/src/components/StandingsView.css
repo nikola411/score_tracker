@@ -1,0 +1,170 @@
+.standings-view {
+  width: 100%;
+}
+
+.sv-topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.standings-view .back-btn {
+  padding: 0.4rem 0.8rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.standings-view .back-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.sv-round-select {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.sv-round-select select {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.standings-view h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.st-table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.st-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.st-table th {
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.st-table td {
+  padding: 0.55rem 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.st-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.st-table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* Position cell */
+.st-pos {
+  width: 52px;
+  text-align: center !important;
+}
+
+.st-pos-num {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.st-change {
+  font-size: 0.65rem;
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+.pos-up   { color: #4ade80; }
+.pos-down { color: #f87171; }
+.pos-eq   { color: var(--text-muted); }
+
+/* Team cell */
+.st-team-col {
+  text-align: left !important;
+  min-width: 160px;
+}
+
+.st-team-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.st-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.st-team-name {
+  font-weight: 600;
+}
+
+/* W / L colors */
+.st-w { color: #4ade80; font-weight: 700; }
+.st-l { color: #f87171; font-weight: 700; }
+
+/* Points diff */
+.st-pos-diff { color: #4ade80; font-weight: 600; }
+.st-neg-diff { color: #f87171; font-weight: 600; }
+
+/* Last 5 form dots */
+.form-dots {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.form-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-w {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+.form-l {
+  background: rgba(248, 113, 113, 0.2);
+  color: #f87171;
+}
