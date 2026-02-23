@@ -98,6 +98,11 @@ function getGameById(gameId, sport) {
 const euroleague = require('./backend/handlers/euroleague');
 euroleague.init(); // fetch and cache data on startup
 
+// --- NBA ---
+
+const nba = require('./backend/handlers/nba');
+nba.init(); // fetch and cache data on startup
+
 // --- Routes ---
 
 app.get('/api/leagues', (req, res) => {
@@ -185,6 +190,56 @@ app.get('/api/euroleague/standings', async (req, res) => {
 app.get('/api/euroleague/rosters', async (req, res) => {
   try {
     const rosters = await euroleague.getRosters();
+    if (!rosters) return res.status(404).json({ error: 'Rosters not available' });
+    res.json(rosters);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/nba/player-stats', async (req, res) => {
+  try {
+    const stats = await nba.getPlayerStats();
+    if (!stats) return res.status(404).json({ error: 'Player stats not available' });
+    res.json(stats);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/nba/boxscore/:gameId', async (req, res) => {
+  try {
+    const data = await nba.getBoxScore(req.params.gameId);
+    if (!data) return res.status(404).json({ error: 'Box score not available' });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/nba/schedule', async (req, res) => {
+  try {
+    const schedule = await nba.getSchedule();
+    if (!schedule) return res.status(404).json({ error: 'Schedule not available' });
+    res.json(schedule);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/nba/standings', async (req, res) => {
+  try {
+    const data = await nba.getStandings();
+    if (!data) return res.status(404).json({ error: 'Standings not available' });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/nba/rosters', async (req, res) => {
+  try {
+    const rosters = await nba.getRosters();
     if (!rosters) return res.status(404).json({ error: 'Rosters not available' });
     res.json(rosters);
   } catch (e) {

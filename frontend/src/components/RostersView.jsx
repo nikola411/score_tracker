@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 
-function RostersView({ onBack, onPlayerClick }) {
+function RostersView({ onBack, onPlayerClick, apiBase = '/api/euroleague' }) {
   const [rosters, setRosters] = useState([])
   const [loading, setLoading] = useState(true)
   const [expandedTeam, setExpandedTeam] = useState(null)
 
+  const isNBA = apiBase.includes('nba')
+
   useEffect(() => {
-    fetch('/api/euroleague/rosters')
+    fetch(`${apiBase}/rosters`)
       .then(res => res.ok ? res.json() : [])
       .then(data => {
         setRosters(data)
@@ -16,12 +18,12 @@ function RostersView({ onBack, onPlayerClick }) {
         setRosters([])
         setLoading(false)
       })
-  }, [])
+  }, [apiBase])
 
   return (
     <div>
-      <button className="back-btn" onClick={onBack}>Back to Leagues</button>
-      <h2>Euroleague Rosters</h2>
+      <button className="back-btn" onClick={onBack}>Back to Menu</button>
+      <h2>{isNBA ? 'NBA' : 'Euroleague'} Rosters</h2>
 
       {loading && <div className="loading">Loading rosters...</div>}
 
@@ -32,6 +34,7 @@ function RostersView({ onBack, onPlayerClick }) {
               className="roster-header"
               onClick={() => setExpandedTeam(expandedTeam === i ? null : i)}
             >
+              {team.logo && <img src={team.logo} alt="" className="roster-logo" />}
               <h3>{team.name}</h3>
               <span className="roster-count">{team.roster?.length || 0} players</span>
               <span className="roster-toggle">{expandedTeam === i ? '▲' : '▼'}</span>
@@ -43,26 +46,31 @@ function RostersView({ onBack, onPlayerClick }) {
                   <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Position</th>
-                    <th>Country</th>
+                    {!isNBA && <th>Position</th>}
+                    {!isNBA && <th>Country</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {team.roster.map((player, j) => (
-                    <tr key={j}>
-                      <td>{player['@_dorsal'] || '-'}</td>
-                      <td>
-                        <span
-                          className="player-link"
-                          onClick={() => onPlayerClick(player['@_code'])}
-                        >
-                          {player['@_name'] || '-'}
-                        </span>
-                      </td>
-                      <td>{player['@_position'] || '-'}</td>
-                      <td>{player['@_countryname'] || '-'}</td>
-                    </tr>
-                  ))}
+                  {team.roster.map((player, j) => {
+                    const dorsal = player['@_dorsal'] ?? '-'
+                    const name = player['@_name'] || player.name || '-'
+                    const code = player['@_code'] || player.playerId
+                    return (
+                      <tr key={j}>
+                        <td>{dorsal}</td>
+                        <td>
+                          <span
+                            className="player-link"
+                            onClick={() => onPlayerClick(code)}
+                          >
+                            {name}
+                          </span>
+                        </td>
+                        {!isNBA && <td>{player['@_position'] || '-'}</td>}
+                        {!isNBA && <td>{player['@_countryname'] || '-'}</td>}
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             )}

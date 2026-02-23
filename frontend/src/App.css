@@ -242,6 +242,13 @@
   transition: background 0.2s;
 }
 
+.roster-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 .roster-header:hover {
   background: var(--surface-hover);
 }

@@ -13,15 +13,17 @@ function pct(made, att) {
   return Math.round((made / att) * 100) + '%'
 }
 
-function TeamTable({ teamData }) {
+function TeamTable({ teamData, isNBA }) {
   if (!teamData?.players?.length) return null
+  const elClub = teamData.players?.[0]?.player?.club
+  const logo = isNBA ? teamData.logo : elClub?.images?.crest
+  const teamName = isNBA ? teamData.teamName : (elClub?.abbreviatedName || elClub?.name || '')
+
   return (
     <div className="bs-team-section">
       <div className="bs-team-header">
-        {teamData.club?.images?.crest && (
-          <img src={teamData.club.images.crest} alt="" className="bs-table-logo" />
-        )}
-        <span className="bs-team-title">{teamData.club?.name}</span>
+        {logo && <img src={logo} alt="" className="bs-table-logo" />}
+        <span className="bs-team-title">{teamName}</span>
         {teamData.coach && (
           <span className="bs-coach">Coach: {teamData.coach.name}</span>
         )}
@@ -34,7 +36,7 @@ function TeamTable({ teamData }) {
               <th className="bs-name-col">Player</th>
               <th>MIN</th>
               <th>PTS</th>
-              <th>2PT</th>
+              <th>FG</th>
               <th>3PT</th>
               <th>FT</th>
               <th>REB</th>
@@ -42,11 +44,37 @@ function TeamTable({ teamData }) {
               <th>STL</th>
               <th>TO</th>
               <th>BLK</th>
-              <th>PIR</th>
+              <th>{isNBA ? '+/-' : 'PIR'}</th>
             </tr>
           </thead>
           <tbody>
             {teamData.players.map((entry, i) => {
+              if (isNBA) {
+                const s = entry.stats
+                return (
+                  <tr key={i}>
+                    <td>{entry.position || '-'}</td>
+                    <td className="bs-name-col">
+                      <div className="bs-player-cell">
+                        <div className="bs-player-name">{entry.name}</div>
+                      </div>
+                    </td>
+                    <td>{s.min || '-'}</td>
+                    <td className="bs-pts-cell">{s.pts}</td>
+                    <td>{s.fgm}/{s.fga} <span className="bs-pct">{pct(s.fgm, s.fga)}</span></td>
+                    <td>{s.fg3m}/{s.fg3a} <span className="bs-pct">{pct(s.fg3m, s.fg3a)}</span></td>
+                    <td>{s.ftm}/{s.fta} <span className="bs-pct">{pct(s.ftm, s.fta)}</span></td>
+                    <td>{s.reb}</td>
+                    <td>{s.ast}</td>
+                    <td>{s.stl}</td>
+                    <td>{s.to}</td>
+                    <td>{s.blk}</td>
+                    <td className={s.plusMinus >= 0 ? 'bs-pir-pos' : 'bs-pir-neg'}>
+                      {s.plusMinus > 0 ? '+' : ''}{s.plusMinus}
+                    </td>
+                  </tr>
+                )
+              }
               const p = entry.player
               const s = entry.stats
               return (
@@ -84,13 +112,14 @@ function TeamTable({ teamData }) {
   )
 }
 
-function BoxScore({ game, onBack }) {
+function BoxScore({ game, onBack, apiBase = '/api/euroleague' }) {
+  const isNBA = apiBase.includes('nba')
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    fetch(`/api/euroleague/boxscore/${game.gamecode}`)
+    fetch(`${apiBase}/boxscore/${game.gamecode}`)
       .then(res => {
         if (!res.ok) throw new Error('Box score not available')
         return res.json()
@@ -103,7 +132,7 @@ function BoxScore({ game, onBack }) {
         setError(err.message)
         setLoading(false)
       })
-  }, [game.gamecode])
+  }, [game.gamecode, apiBase])
 
   return (
     <div className="box-score">
@@ -130,8 +159,8 @@ function BoxScore({ game, onBack }) {
       {error && <p className="empty">{error}</p>}
       {data && (
         <div className="bs-tables">
-          <TeamTable teamData={data.local} />
-          <TeamTable teamData={data.road} />
+          <TeamTable teamData={data.local} isNBA={isNBA} />
+          <TeamTable teamData={data.road} isNBA={isNBA} />
         </div>
       )}
     </div>

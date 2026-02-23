@@ -3,6 +3,7 @@ import GamesView from './components/GamesView'
 import GameStats from './components/GameStats'
 import RostersView from './components/RostersView'
 import PlayerStats from './components/PlayerStats'
+import NBAStatisticsView from './components/NBAStatisticsView'
 import ScheduleView from './components/ScheduleView'
 import BoxScore from './components/BoxScore'
 import NextGameday from './components/NextGameday'
@@ -29,6 +30,12 @@ function App() {
   const [selectedSeason, setSelectedSeason] = useState(null)
   const [selectedPlayerCode, setSelectedPlayerCode] = useState(null)
   const [selectedEuroleagueGame, setSelectedEuroleagueGame] = useState(null)
+  const [elBoxScoreSource, setElBoxScoreSource] = useState('euroleagueGames')
+
+  // NBA state
+  const [selectedNBAGame, setSelectedNBAGame] = useState(null)
+  const [selectedNBAPlayer, setSelectedNBAPlayer] = useState(null)
+  const [nbaBoxScoreSource, setNBABoxScoreSource] = useState('nbaGames')
 
   useEffect(() => {
     setLoading(true)
@@ -60,6 +67,11 @@ function App() {
 
     if (league.name === 'Euroleague') {
       setView('euroleagueMenu')
+      return
+    }
+
+    if (league.name === 'NBA') {
+      setView('nbaMenu')
       return
     }
 
@@ -167,12 +179,14 @@ function App() {
           />
         )}
 
+        {/* ── Euroleague ── */}
+
         {view === 'euroleagueMenu' && (
           <section className="euroleague-menu">
             <button className="back-btn" onClick={handleBackToLeagues}>Back to Leagues</button>
             <h2>Euroleague</h2>
             <div className="menu-grid">
-              {['Games', 'Standings', 'Rosters', 'Statistics'].map(option => (
+              {['Games', 'Standings', 'Rosters'].map(option => (
                 <div
                   key={option}
                   className="menu-card"
@@ -185,6 +199,7 @@ function App() {
             <NextGameday
               onGameClick={(game) => {
                 setSelectedEuroleagueGame(game)
+                setElBoxScoreSource('euroleagueMenu')
                 setView('euroleagueBoxScore')
               }}
               onViewAll={() => setView('euroleagueGames')}
@@ -217,6 +232,7 @@ function App() {
             onBack={() => setView('euroleagueMenu')}
             onGameClick={(game) => {
               setSelectedEuroleagueGame(game)
+              setElBoxScoreSource('euroleagueGames')
               setView('euroleagueBoxScore')
             }}
           />
@@ -227,7 +243,7 @@ function App() {
             game={selectedEuroleagueGame}
             onBack={() => {
               setSelectedEuroleagueGame(null)
-              setView('euroleagueGames')
+              setView(elBoxScoreSource)
             }}
           />
         )}
@@ -238,6 +254,90 @@ function App() {
 
         {view === 'euroleagueStatistics' && (
           <PlayerStats onBack={() => setView('euroleagueMenu')} />
+        )}
+
+        {/* ── NBA ── */}
+
+        {view === 'nbaMenu' && (
+          <section className="euroleague-menu">
+            <button className="back-btn" onClick={handleBackToLeagues}>Back to Leagues</button>
+            <h2>NBA</h2>
+            <div className="menu-grid">
+              {['Games', 'Standings', 'Rosters'].map(option => (
+                <div
+                  key={option}
+                  className="menu-card"
+                  onClick={() => setView(`nba${option}`)}
+                >
+                  <h3>{option}</h3>
+                </div>
+              ))}
+            </div>
+            <NextGameday
+              apiBase="/api/nba"
+              onGameClick={(game) => {
+                setSelectedNBAGame(game)
+                setNBABoxScoreSource('nbaMenu')
+                setView('nbaBoxScore')
+              }}
+              onViewAll={() => setView('nbaGames')}
+            />
+          </section>
+        )}
+
+        {view === 'nbaGames' && (
+          <ScheduleView
+            apiBase="/api/nba"
+            onBack={() => setView('nbaMenu')}
+            onGameClick={(game) => {
+              setSelectedNBAGame(game)
+              setNBABoxScoreSource('nbaGames')
+              setView('nbaBoxScore')
+            }}
+          />
+        )}
+
+        {view === 'nbaBoxScore' && selectedNBAGame && (
+          <BoxScore
+            game={selectedNBAGame}
+            apiBase="/api/nba"
+            onBack={() => {
+              setSelectedNBAGame(null)
+              setView(nbaBoxScoreSource)
+            }}
+          />
+        )}
+
+        {view === 'nbaStandings' && (
+          <StandingsView
+            apiBase="/api/nba"
+            onBack={() => setView('nbaMenu')}
+          />
+        )}
+
+        {view === 'nbaRosters' && (
+          <RostersView
+            apiBase="/api/nba"
+            onBack={() => setView('nbaMenu')}
+            onPlayerClick={(playerId) => {
+              setSelectedNBAPlayer(playerId)
+              setView('nbaPlayerStats')
+            }}
+          />
+        )}
+
+        {view === 'nbaPlayerStats' && selectedNBAPlayer != null && (
+          <NBAStatisticsView
+            playerId={selectedNBAPlayer}
+            onBack={() => {
+              setSelectedNBAPlayer(null)
+              setView('nbaRosters')
+            }}
+          />
+        )}
+
+        {view === 'nbaStatistics' && (
+          <NBAStatisticsView onBack={() => setView('nbaMenu')} />
         )}
 
         {view === 'gameStats' && selectedGame && (
