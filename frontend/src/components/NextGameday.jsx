@@ -59,7 +59,7 @@ function NextGameday({ onGameClick, onViewAll, apiBase = '/api/euroleague' }) {
           >
             <div className="ng-date">
             {isNBA
-              ? new Date(g.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+              ? new Date(g.datetime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
               : `${g.date} · ${g.startime}`
             }
           </div>

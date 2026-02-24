@@ -130,6 +130,24 @@ function CalendarPicker({ schedule, selectedDate, onSelectDate }) {
   )
 }
 
+function currentGameday(data) {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const idx = data.findIndex(r => {
+    const future = r.games.filter(g => new Date(g.date) >= today).length
+    return future > r.games.length / 2
+  })
+  let round
+  if (idx === -1) {
+    round = data[data.length - 1]
+  } else if (idx > 0 && !data[idx].games.some(g => g.played)) {
+    round = data[idx - 1]
+  } else {
+    round = data[idx]
+  }
+  return round?.gameday ?? null
+}
+
 function ScheduleView({ onBack, onGameClick, apiBase = '/api/euroleague' }) {
   const [schedule, setSchedule] = useState([])
   const [loading, setLoading] = useState(true)
@@ -146,8 +164,7 @@ function ScheduleView({ onBack, onGameClick, apiBase = '/api/euroleague' }) {
       })
       .then(data => {
         setSchedule(data)
-        const current = data.find(r => r.games.some(g => !g.played)) || data[data.length - 1]
-        setSelectedRound(current?.gameday ?? null)
+        setSelectedRound(currentGameday(data))
         setLoading(false)
       })
       .catch(err => {
@@ -196,7 +213,12 @@ function ScheduleView({ onBack, onGameClick, apiBase = '/api/euroleague' }) {
                   className={`sv-game ${g.played ? 'played clickable' : 'upcoming'}`}
                   onClick={() => g.played && onGameClick(g)}
                 >
-                  <div className="sv-date">{g.date} &middot; {g.startime}</div>
+                  <div className="sv-date">
+                    {isNBA && g.datetime
+                      ? new Date(g.datetime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+                      : `${g.date} · ${g.startime}`
+                    }
+                  </div>
                   <div className="sv-matchup">
                     <div className="sv-team sv-home">
                       <span className="sv-team-name">{g.hometeam}</span>

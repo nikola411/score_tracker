@@ -40,7 +40,7 @@ const teamLogoUrl = (teamId) =>
 
 
 const initStats = async () => {
-    if (readCache(STATS_FILE)) {
+    if (await readCache(STATS_FILE)) {
         console.log('[NBA] Player stats loaded from cache');
         return;
     }
@@ -49,12 +49,12 @@ const initStats = async () => {
         `${STATS_ENDPOINT}/leaguedashplayerstats?Season=${SEASON}&SeasonType=Regular+Season&PerMode=PerGame&MeasureType=Base&LeagueID=00`,
         { headers: NBA_HEADERS, timeout: 60000 }
     );
-    writeCache(STATS_FILE, res.data);
+    await writeCache(STATS_FILE, res.data);
     console.log('[NBA] Player stats cached');
 };
 
 const initRosters = async () => {
-    if (readCache(ROSTERS_FILE)) {
+    if (await readCache(ROSTERS_FILE)) {
         console.log('[NBA] Rosters loaded from cache');
         return;
     }
@@ -84,52 +84,61 @@ const initRosters = async () => {
         });
     }
     const teams = Object.values(teamMap);
-    writeCache(ROSTERS_FILE, teams);
+    await writeCache(ROSTERS_FILE, teams);
     console.log(`[NBA] Rosters cached (${teams.length} teams, ${players.length} players)`);
 };
 
 const initSchedule = async () => {
-    if (readCache(SCHEDULE_FILE)) {
-        console.log('[NBA] Schedule loaded from cache');
-        return;
+    const cached = await readCache(SCHEDULE_FILE);
+    if (cached) {
+        // Stale if any past game-day still has gameStatus 1 (pre-game)
+        const localToday = new Date().toLocaleDateString('en-CA'); // "YYYY-MM-DD" local
+        const isStale = cached.some(week =>
+            week.gameday < localToday &&
+            week.games.some(g => g.gameStatus === 1)
+        );
+        if (!isStale) {
+            console.log('[NBA] Schedule loaded from cache');
+            return;
+        }
+        console.log('[NBA] Schedule cache stale, re-fetching...');
     }
     console.log('[NBA] Fetching schedule...');
-    // CDN schedule — no special headers required
     const res = await axios.get(`${CDN_ENDPOINT}/staticData/scheduleLeagueV2.json`);
     const gameDates = res.data.leagueSchedule.gameDates;
 
-    // Group all games by calendar date (YYYY-MM-DD)
+    // Group by ET game date so evening games stay on the correct calendar day
     const dateMap = {};
     for (const dateEntry of gameDates) {
         for (const game of dateEntry.games) {
-            const dateKey = game.gameDateTimeUTC.split('T')[0]; // "2025-11-04"
+            const dateKey = game.gameDateEst.split('T')[0]; // "2026-02-23" (ET date)
             if (!dateMap[dateKey]) dateMap[dateKey] = { gameday: dateKey, games: [] };
             dateMap[dateKey].games.push(game);
         }
     }
 
-    // Sort by date string and store as array
     const rounds = Object.values(dateMap).sort((a, b) => a.gameday.localeCompare(b.gameday));
-    writeCache(SCHEDULE_FILE, rounds);
+    await writeCache(SCHEDULE_FILE, rounds);
     console.log(`[NBA] Schedule cached (${rounds.length} game days)`);
 };
 
 const getPlayerStats = async () => {
     console.log('[NBA] getPlayerStats');
-    const data = readCache(STATS_FILE);
+    const data = await readCache(STATS_FILE);
     if (!data) return null;
     return toObjects(data.resultSets[0]);
 };
 
 const getSchedule = async () => {
     console.log('[NBA] getSchedule');
-    const data = readCache(SCHEDULE_FILE);
+    const data = await readCache(SCHEDULE_FILE);
     if (!data) return null;
     return data.map(week => ({
         gameday: week.gameday,
         games: week.games.map(g => ({
             gamecode: g.gameId,
-            date: g.gameDateTimeUTC,
+            date: g.gameDateEst,        // ET game date — used for future/past comparison
+            datetime: g.gameDateTimeUTC, // UTC datetime — used for time display
             played: g.gameStatus === 3,
             hometeam: `${g.homeTeam.teamCity} ${g.homeTeam.teamName}`,
             awayteam: `${g.awayTeam.teamCity} ${g.awayTeam.teamName}`,
@@ -153,7 +162,7 @@ const parseDuration = (iso) => {
 
 const getBoxScore = async (gameId) => {
     console.log(`[NBA] getBoxScore ${gameId}`);
-    const games = readCache(BOX_SCORE_FILE) || [];
+    const games = await readCache(BOX_SCORE_FILE) || [];
     const cached = games.find(g => g.gameId === gameId && g.local?.players?.some(p => p.stats?.min != null));
     if (cached) {
         console.log(`[NBA] Box score for ${gameId} served from cache`);
@@ -203,19 +212,19 @@ const getBoxScore = async (gameId) => {
         local: formatTeam(game.homeTeam),
         road: formatTeam(game.awayTeam),
     };
-    appendCache(BOX_SCORE_FILE, boxScore);
+    await appendCache(BOX_SCORE_FILE, boxScore);
     console.log(`[NBA] Box score for ${gameId} cached (home: ${game.homeTeam.players.length} players)`);
     return boxScore;
 };
 
 const getRosters = async () => {
     console.log('[NBA] getRosters');
-    return readCache(ROSTERS_FILE);
+    return await readCache(ROSTERS_FILE);
 };
 
 // Returns the latest date string where the majority of games have been played
-const getLatestPlayedRound = () => {
-    const data = readCache(SCHEDULE_FILE);
+const getLatestPlayedRound = async () => {
+    const data = await readCache(SCHEDULE_FILE);
     if (!data) return null;
     let latest = null;
     for (const day of data) {
@@ -227,7 +236,7 @@ const getLatestPlayedRound = () => {
 
 const getStandings = async (round) => {
     console.log(`[NBA] getStandings${round ? ` round=${round}` : ''}`);
-    const cache = readCache(STANDINGS_FILE) || {};
+    const cache = await readCache(STANDINGS_FILE) || {};
     const key = String(round || 'current');
     if (cache[key]) {
         console.log(`[NBA] Standings served from cache (key=${key})`);
@@ -260,7 +269,7 @@ const getStandings = async (round) => {
     }));
 
     cache[key] = standings;
-    writeCache(STANDINGS_FILE, cache);
+    await writeCache(STANDINGS_FILE, cache);
     console.log(`[NBA] Standings cached (${standings.length} teams)`);
     return standings;
 };

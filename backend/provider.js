@@ -1,34 +1,24 @@
-const fs = require('fs');
-const path = require('path');
-const readCache = (file) => {
-    if (fs.existsSync(file)) {
-        const content = fs.readFileSync(file, 'utf8');
-        if (!content) return null;
-        return JSON.parse(content);
-    }
+const { Redis } = require('@upstash/redis');
 
-    return null;
+const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+// Upstash auto-serializes/deserializes JSON — no manual JSON.parse/stringify needed
+const readCache = async (key) => {
+    const val = await redis.get(key);
+    return val ?? null;
 };
 
-const writeCache = (file, data) => {
-    if (!fs.existsSync(file)) {
-        fs.mkdirSync(path.dirname(file), { recursive: true }); // creates parent dirs too
-        fs.writeFileSync(file, '');
-    }
-    fs.writeFileSync(file, JSON.stringify(data));
+const writeCache = async (key, data) => {
+    await redis.set(key, data);
 };
 
-const appendCache = (file, data) => {
-    if (!fs.existsSync(file)) {
-        fs.mkdirSync(path.dirname(file), { recursive: true });
-    }
-    let existing = [];
-    try {
-        const content = fs.readFileSync(file, 'utf8');
-        if (content) existing = JSON.parse(content);
-    } catch {}
+const appendCache = async (key, data) => {
+    const existing = await redis.get(key) || [];
     existing.push(data);
-    fs.writeFileSync(file, JSON.stringify(existing));
-}
+    await redis.set(key, existing);
+};
 
 module.exports = { readCache, writeCache, appendCache };
