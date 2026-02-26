@@ -90,6 +90,16 @@ app.get('/api/euroleague/schedule', async (req, res) => {
   }
 });
 
+app.get('/api/euroleague/live', async (req, res) => {
+  try {
+    const data = await euroleague.getLiveRound();
+    if (!data) return res.status(404).json({ error: 'No active round found' });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.get('/api/euroleague/standings', async (req, res) => {
   try {
     const round = req.query.round ? parseInt(req.query.round) : null;

@@ -219,6 +219,18 @@
   margin: 0;
 }
 
+.menu-card-live {
+  background: #1a0a0a;
+  border-color: #7f1d1d;
+  color: #f87171;
+}
+
+.menu-card-live:hover {
+  background: #7f1d1d !important;
+  border-color: #ef4444 !important;
+  color: #fff !important;
+}
+
 /* Rosters */
 .rosters-list {
   display: flex;

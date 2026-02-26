@@ -32,6 +32,7 @@ const SCHEDULES_FILE = './cache/euroleague/schedule';
 const RESULTS_FILE = './cache/euroleague/results';
 const GAMES_FILE = './cache/euroleague/box_score';
 const STANDINGS_FILE = './cache/euroleague/standings';
+const LIVE_GAMES_FILE = './cache/euroleague/live_games';
 const STANDINGS_BY_ROUND = '/v2/competitions/E/seasons/E2025/rounds/';
 
 const parser = new XMLParser({
@@ -163,6 +164,100 @@ const getLatestPlayedRound = async () => {
     return latest;
 }
 
+const getLiveRound = async () => {
+    const data = await readCache(SCHEDULES_FILE);
+    if (!data) return null;
+
+    const now = new Date();
+    const todayStr = now.toDateString();
+
+    const clubs = await readCache(CLUBS_DATA_FILE) || [];
+    const clubMap = {};
+    clubs.forEach(c => { clubMap[c.code] = c; });
+
+    const roundItems = (round) => Array.isArray(round.schedule?.item)
+        ? round.schedule.item
+        : [round.schedule?.item].filter(Boolean);
+
+    // Find round with games today; else next upcoming round; else last round
+    let targetRound = data[data.length - 1];
+    let found = false;
+    for (const round of data) {
+        const items = roundItems(round);
+        if (items.some(g => g.date && new Date(g.date).toDateString() === todayStr)) {
+            targetRound = round;
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        for (const round of data) {
+            const items = roundItems(round);
+            if (items.some(g => g.date && new Date(g.date) > now)) {
+                targetRound = round;
+                break;
+            }
+        }
+    }
+
+    const items = roundItems(targetRound)
+        .slice()
+        .sort((a, b) => new Date(`${a.date} ${a.startime}`) - new Date(`${b.date} ${b.startime}`));
+    const gameday = items[0]?.gameday;
+    console.log(`[LIVE] Round ${gameday} — ${items.length} games`);
+
+    // Fetch live box scores for started games
+    const liveBoxScores = {};
+    for (const game of items) {
+        if (!game.date || !game.startime) continue;
+        const start = new Date(`${game.date} ${game.startime}`);
+        if (start <= now) {
+            const codeStr = String(game.gamecode);
+            const gameNumber = codeStr.includes('_') ? codeStr.split('_')[1] : codeStr;
+            const url = ENDPOINT + GAME_STATS + gameNumber + '/stats';
+            console.log(`[LIVE] Fetching gamecode=${codeStr} url=${url}`);
+            try {
+                const res = await axios.get(url);
+                console.log(`[LIVE] OK gamecode=${codeStr} local=${res.data?.local?.players?.length ?? 'n/a'} road=${res.data?.road?.players?.length ?? 'n/a'}`);
+                liveBoxScores[game.gamecode] = res.data;
+            } catch (e) {
+                console.error(`[LIVE] FAIL gamecode=${codeStr} error=${e.message}`);
+            }
+        } else {
+            console.log(`[LIVE] Skipped gamecode=${String(game.gamecode)} start=${start}`);
+        }
+    }
+
+    if (Object.keys(liveBoxScores).length > 0) {
+        await writeCache(LIVE_GAMES_FILE, liveBoxScores);
+    }
+
+    const games = items.map(g => {
+        const start = g.date && g.startime ? new Date(`${g.date} ${g.startime}`) : null;
+        const hasStarted = !!(start && start <= now);
+        const isLive = hasStarted && !g.played;
+        const liveData = liveBoxScores[g.gamecode];
+
+        let homescore = null, awayscore = null;
+        if (liveData) {
+            homescore = (liveData.local?.players || []).reduce((s, p) => s + (p.stats?.points || 0), 0);
+            awayscore = (liveData.road?.players || []).reduce((s, p) => s + (p.stats?.points || 0), 0);
+        }
+
+        return {
+            ...g,
+            homeLogo: clubMap[g.homecode]?.images?.crest || null,
+            awayLogo: clubMap[g.awaycode]?.images?.crest || null,
+            hasStarted,
+            isLive,
+            homescore,
+            awayscore,
+        };
+    });
+
+    return { gameday, games };
+};
+
 const getStandings = async (round) => {
     const r = round || await getLatestPlayedRound();
     const cache = await readCache(STANDINGS_FILE) || {};
@@ -207,4 +302,4 @@ const init = async () => {
     }
 };
 
-module.exports = { init, getRosters, getPlayerStats, getSchedule, getBoxScore, getStandings };
+module.exports = { init, getRosters, getPlayerStats, getSchedule, getBoxScore, getStandings, getLiveRound };

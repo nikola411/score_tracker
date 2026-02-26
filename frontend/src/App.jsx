@@ -8,6 +8,7 @@ import ScheduleView from './components/ScheduleView'
 import BoxScore from './components/BoxScore'
 import NextGameday from './components/NextGameday'
 import StandingsView from './components/StandingsView'
+import LiveView from './components/LiveView'
 import './App.css'
 
 const SPORTS = [
@@ -195,6 +196,12 @@ function App() {
                   <h3>{option}</h3>
                 </div>
               ))}
+              <div
+                className="menu-card menu-card-live"
+                onClick={() => setView('euroleagueLive')}
+              >
+                <h3>Live</h3>
+              </div>
             </div>
             <NextGameday
               onGameClick={(game) => {
@@ -244,6 +251,17 @@ function App() {
             onBack={() => {
               setSelectedEuroleagueGame(null)
               setView(elBoxScoreSource)
+            }}
+          />
+        )}
+
+        {view === 'euroleagueLive' && (
+          <LiveView
+            onBack={() => setView('euroleagueMenu')}
+            onGameClick={(game) => {
+              setSelectedEuroleagueGame(game)
+              setElBoxScoreSource('euroleagueLive')
+              setView('euroleagueBoxScore')
             }}
           />
         )}
