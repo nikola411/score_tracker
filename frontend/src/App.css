@@ -8,7 +8,7 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;
   border-bottom: 1px solid var(--border);
@@ -53,13 +53,17 @@
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 1rem;
+    display: flex;
+      align-items: center;
+  justify-content: center;
   color: var(--text-muted);
 }
 
 /* League grid */
 .league-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 320px));
   gap: 1rem;
   margin-bottom: 2.5rem;
 }
@@ -67,6 +71,7 @@
 .league-card {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
   padding: 1.25rem;
   background: var(--surface);
@@ -340,6 +345,16 @@
   color: var(--text-muted);
   font-size: 0.9rem;
   padding: 1rem 0;
+}
+
+.site-footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 @media (max-width: 600px) {
